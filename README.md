@@ -12,7 +12,7 @@ Bienvenue dans l'univers de **YarPal**, un assistant financier personnel conçu 
 ### 1. Installation
 Récupérez le projet sur votre machine :
 ```bash
-git clone https://github.com/vinceRJ/financial_assistant.git
+git clone https://github.com/vinceRJ/YarPal.git
 cd financial_assistant
 pip install -r requirements.txt
 ```
