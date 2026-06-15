@@ -51,6 +51,23 @@ if not check_password():
 # --- CUSTOM CSS: WARM & FRIENDLY STYLE ---
 st.markdown("""
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    /* Police Inter (proche de Claude) sur toute l'application */
+    html, body,
+    p, label, input, textarea, button,
+    h1, h2, h3, h4, h5, h6,
+    .stMarkdown, .stText, .stChatMessage,
+    [data-testid="stChatInput"] textarea,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+    }
+    /* Reset font pour les composants internes BasWeb (flèches, icônes selectbox) */
+    [data-baseweb] [class^="_"] {
+        font-family: initial !important;
+    }
+
     /* Palette LarPal : Fond crème, texte gris doux, accents ambre/vert */
     [data-testid="stAppViewContainer"] { 
         background-color: #fdfbf7; 
@@ -77,13 +94,30 @@ st.markdown("""
         font-weight: 600;
     }
     /* Style des bulles de chat LarPal */
-    .stChatMessage { 
-        background-color: #ffffff; 
-        border: 1px solid #f1f2f6; 
-        border-radius: 20px; 
+    .stChatMessage {
+        background-color: #ffffff;
+        border: 1px solid #f1f2f6;
+        border-radius: 20px;
         box-shadow: 0 2px 10px rgba(0,0,0,0.03);
         margin-bottom: 15px;
         padding: 15px;
+    }
+    /* Texte des messages dans le chat */
+    .stChatMessage p, .stChatMessage li, .stChatMessage span {
+        font-size: 1.2rem !important;
+        line-height: 1.75 !important;
+    }
+    /* Champ de saisie du chat */
+    [data-testid="stChatInput"] textarea {
+        font-size: 1.2rem !important;
+    }
+    /* Texte de la sidebar */
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] p,
+    [data-testid="stSidebar"] .stTextInput input,
+    [data-testid="stSidebar"] .stNumberInput input,
+    [data-testid="stSidebar"] .stSelectbox [data-baseweb="select"] [data-testid="stMarkdownContainer"] {
+        font-size: 1.05rem !important;
     }
     /* Boutons arrondis LarPal */
     .stButton>button {
@@ -149,7 +183,8 @@ with st.sidebar:
             st.write("Rien à supprimer ici !")
 
 # --- MAIN INTERFACE ---
-st.title("Ravi de vous revoir ! ☕")
+name_user = os.getenv("USER_NAME")
+st.title(f"Ravi de vous revoir, {name_user} ! ☕")
 st.subheader("Jetons un œil à la santé de vos finances aujourd'hui.")
 st.markdown("---")
 
@@ -259,15 +294,9 @@ if prompt := st.chat_input("Ex: LarPal, peux-tu analyser mes positions sur le PE
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.status("🔮 LarPal réfléchit...", expanded=True) as status:
-            st.write("📡 Récupération des cours en temps réel...")
-            # On pourrait ici ajouter de la logique pour détecter quel outil est utilisé, 
-            # mais on simule le flux pour l'UX
-            response = run_financial_agent(prompt)
-            st.write("🔍 Analyse des actualités et du contexte...")
-            st.write("🧠 Synthèse stratégique finale...")
-            status.update(label="✨ Analyse terminée !", state="complete", expanded=False)
-
+        with st.spinner("🔮 LarPal réfléchit..."):
+            history = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[:-1]]
+            response = run_financial_agent(prompt, history)
         st.markdown(response)
 
         
