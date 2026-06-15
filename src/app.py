@@ -5,8 +5,11 @@ import plotly.graph_objects as go
 import json
 import os
 import re
+from dotenv import load_dotenv
 from openai_agent import run_financial_agent, load_portfolio, get_portfolio_status, PORTFOLIO_PATH
 from data_fetch import get_historical_prices
+
+load_dotenv()
 
 TICKER_RE = re.compile(r'^[A-Z0-9]{1,6}(\.[A-Z]{1,2})?$')
 
