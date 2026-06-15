@@ -10,7 +10,7 @@ from data_fetch import get_historical_prices
 
 TICKER_RE = re.compile(r'^[A-Z0-9]{1,6}(\.[A-Z]{1,2})?$')
 
-st.set_page_config(page_title="YarPal - Votre Allié Financier", page_icon="🌤️", layout="wide")
+st.set_page_config(page_title="LarPal - Votre Allié Financier", page_icon="🌤️", layout="wide")
 
 # --- AUTHENTICATION SYSTEM ---
 def check_password():
@@ -22,24 +22,24 @@ def check_password():
         return True
 
     # Show input for password
-    st.title("🌤️ Bienvenue sur YarPal")
+    st.title("🌤️ Bienvenue sur LarPal")
     st.markdown("---")
-    pwd = st.text_input("Veuillez saisir le code d'accès YarPal pour continuer :", type="password")
+    pwd = st.text_input("Veuillez saisir le code d'accès LarPal pour continuer :", type="password")
     
     # Check against environment variable
-    master_pwd = os.getenv("YARPAL_PASSWORD")  # Pas de valeur par défaut — doit être défini explicitement
+    master_pwd = os.getenv("LARPAL_PASSWORD")  # Pas de valeur par défaut — doit être défini explicitement
 
-    if st.button("Déverrouiller YarPal"):
+    if st.button("Déverrouiller LarPal"):
         if not master_pwd:
-            st.error("⚠️ Variable YARPAL_PASSWORD non configurée. Définissez-la dans votre fichier .env.")
+            st.error("⚠️ Variable LARPAL_PASSWORD non configurée. Définissez-la dans votre fichier .env.")
         elif pwd == master_pwd:
             st.session_state["password_correct"] = True
-            st.success("Accès autorisé ! Chargement de YarPal...")
+            st.success("Accès autorisé ! Chargement de LarPal...")
             st.rerun()
         else:
             st.error("😕 Code incorrect. Veuillez réessayer.")
 
-    st.info("💡 Définissez la variable 'YARPAL_PASSWORD' dans votre fichier .env ou vos secrets de déploiement.")
+    st.info("💡 Définissez la variable 'LARPAL_PASSWORD' dans votre fichier .env ou vos secrets de déploiement.")
     return False
 
 if not check_password():
@@ -48,7 +48,7 @@ if not check_password():
 # --- CUSTOM CSS: WARM & FRIENDLY STYLE ---
 st.markdown("""
     <style>
-    /* Palette YarPal : Fond crème, texte gris doux, accents ambre/vert */
+    /* Palette LarPal : Fond crème, texte gris doux, accents ambre/vert */
     [data-testid="stAppViewContainer"] { 
         background-color: #fdfbf7; 
         color: #4a4a4a; 
@@ -73,7 +73,7 @@ st.markdown("""
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         font-weight: 600;
     }
-    /* Style des bulles de chat YarPal */
+    /* Style des bulles de chat LarPal */
     .stChatMessage { 
         background-color: #ffffff; 
         border: 1px solid #f1f2f6; 
@@ -82,7 +82,7 @@ st.markdown("""
         margin-bottom: 15px;
         padding: 15px;
     }
-    /* Boutons arrondis YarPal */
+    /* Boutons arrondis LarPal */
     .stButton>button {
         border-radius: 20px;
         background-color: #ff9f43;
@@ -103,7 +103,7 @@ def save_portfolio(data):
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("🌤️ Menu YarPal")
+    st.title("🌤️ Menu LarPal")
     portfolio = load_portfolio()
     selected_account = st.selectbox("Afficher mes placements", ["Vue d'ensemble", "Mon PEA", "Mon CTO"])
     
@@ -116,7 +116,7 @@ with st.sidebar:
         new_qty = st.number_input("Nombre de titres", min_value=0.0, key="add_qty")
         new_cost = st.number_input("Prix d'achat moyen", min_value=0.0, key="add_cost")
         
-        if st.button("Enregistrer dans YarPal"):
+        if st.button("Enregistrer dans LarPal"):
             if new_ticker and new_name:
                 if not TICKER_RE.match(new_ticker):
                     st.error("Symbole boursier invalide. Utilisez uniquement des lettres, chiffres et un point optionnel (ex: MC.PA, NVDA).")
@@ -125,7 +125,7 @@ with st.sidebar:
                 else:
                     portfolio[acc_type][new_ticker] = {"name": new_name[:100], "quantity": new_qty, "avg_cost": new_cost}
                     save_portfolio(portfolio)
-                    st.success("C'est fait ! YarPal a mis à jour votre portefeuille. ✨")
+                    st.success("C'est fait ! LarPal a mis à jour votre portefeuille. ✨")
                     # Reset des champs dans session_state
                     st.session_state["add_ticker"] = ""
                     st.session_state["add_name"] = ""
@@ -140,7 +140,7 @@ with st.sidebar:
             if st.button("Confirmer le retrait"):
                 del portfolio[del_acc][ticker_to_del]
                 save_portfolio(portfolio)
-                st.warning(f"{ticker_to_del} n'est plus suivi par YarPal.")
+                st.warning(f"{ticker_to_del} n'est plus suivi par LarPal.")
                 st.rerun()
         else:
             st.write("Rien à supprimer ici !")
@@ -227,7 +227,7 @@ if not df.empty:
 st.markdown("---")
 
 # --- CONVIVIAL CHAT ---
-st.subheader("💬 Une question pour YarPal ?")
+st.subheader("💬 Une question pour LarPal ?")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -250,13 +250,13 @@ for message in st.session_state.messages:
                 fig.update_layout(template="simple_white")
                 st.plotly_chart(fig, use_container_width=True)
 
-if prompt := st.chat_input("Ex: YarPal, peux-tu analyser mes positions sur le PEA ?"):
+if prompt := st.chat_input("Ex: LarPal, peux-tu analyser mes positions sur le PEA ?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
     with st.chat_message("assistant"):
-        with st.status("🔮 YarPal réfléchit...", expanded=True) as status:
+        with st.status("🔮 LarPal réfléchit...", expanded=True) as status:
             st.write("📡 Récupération des cours en temps réel...")
             # On pourrait ici ajouter de la logique pour détecter quel outil est utilisé, 
             # mais on simule le flux pour l'UX
@@ -286,4 +286,4 @@ if prompt := st.chat_input("Ex: YarPal, peux-tu analyser mes positions sur le PE
 
 # --- FOOTER & LEGAL ---
 st.markdown("---")
-st.caption("⚠️ **Avertissement :** YarPal utilise des Intelligences Artificielles qui peuvent commettre des erreurs. Les informations et conseils fournis ne constituent pas des conseils financiers officiels. Vérifiez toujours les données avant de prendre une décision d'investissement.")
+st.caption("⚠️ **Avertissement :** LarPal utilise des Intelligences Artificielles qui peuvent commettre des erreurs. Les informations et conseils fournis ne constituent pas des conseils financiers officiels. Vérifiez toujours les données avant de prendre une décision d'investissement.")
